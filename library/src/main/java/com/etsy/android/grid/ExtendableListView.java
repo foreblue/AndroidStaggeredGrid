@@ -69,6 +69,7 @@ public abstract class ExtendableListView extends AbsListView {
     private static final int TOUCH_MODE_DOWN = 3;
     private static final int TOUCH_MODE_TAP = 4;
     private static final int TOUCH_MODE_DONE_WAITING = 5;
+	private static final int TOUCH_MODE_FORCE_STOP = 6;
 
     private static final int INVALID_POINTER = -1;
 
@@ -1197,8 +1198,12 @@ public abstract class ExtendableListView extends AbsListView {
         // TODO : ELSE SUPPORT OVERSCROLL!
     }
 
-	public void scroll(int y) {
+	public void scrollByManual(int y) {
 		moveTheChildren(y, y);
+	}
+
+	public void setStopFling() {
+		mFlingRunnable.setStopFling();
 	}
 
     private int findMotionRow(int y) {
@@ -2008,6 +2013,7 @@ public abstract class ExtendableListView extends AbsListView {
          * Tracks the decay of a fling scroll
          */
         private final Scroller mScroller;
+		private boolean stopFling = false;
 
         /**
          * Y value reported by mScroller on the previous fling
@@ -2045,7 +2051,17 @@ public abstract class ExtendableListView extends AbsListView {
             mScroller.forceFinished(true);
         }
 
+		public void setStopFling() {
+			stopFling = true;
+		}
+
         public void run() {
+			if (stopFling) {
+				endFling();
+				stopFling = false;
+				return;
+			}
+
             switch (mTouchMode) {
                 default:
                     return;

@@ -105,8 +105,11 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
 				mAdapter.setItemAddListener(new SampleAdapter.ItemAddListener() {
 					@Override
 					public void onItemAdded() {
-						int dist = mGridView.getDistanceToTop() + header.getHeight();
-						mGridView.scroll(dist * -1);
+						if (mGridView.getDistanceToTop() != 0) {
+							return;
+						}
+						int dist = header.getHeight();
+						mGridView.scrollByManual(dist * -1);
 						mAdapter.setItemAddListener(null);
 					}
 				});
@@ -115,12 +118,14 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
 				fetchData();
 				break;
 			case R.id.scroll:
-				Log.d("test", String.valueOf(mGridView.getDistanceToTop()));
+				mGridView.setStopFling();
 				while (mGridView.getDistanceToTop() * -1 != header.getHeight()) {
-					int dist = mGridView.getDistanceToTop() + header.getHeight();
-					mGridView.scroll(dist * -1);
+					if (mGridView.getDistanceToTop() * -1 < header.getHeight()) {
+						mGridView.scrollByManual(-1);
+					} else {
+						mGridView.scrollByManual(1);
+					}
 				}
-				Log.d("test", String.valueOf(mGridView.getDistanceToTop()));
 				break;
 		}
         return true;

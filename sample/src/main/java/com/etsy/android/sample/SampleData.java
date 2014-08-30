@@ -13,8 +13,7 @@ public class SampleData {
 
 		Date now = new Date();
         for (int i = 0; i < SAMPLE_DATA_ITEM_COUNT; i++) {
-			String s = String.format("%d", now.getTime());
-            data.add("SAMPLE #" + s);
+            data.add("SAMPLE #");
         }
 
         return data;
