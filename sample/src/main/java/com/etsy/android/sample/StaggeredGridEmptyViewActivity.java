@@ -114,6 +114,7 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
 					}
 				});
 
+				mGridView.resetToTop();
 				mAdapter.clear();
 				fetchData();
 				break;
