@@ -2,12 +2,15 @@ package com.etsy.android.sample;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.TextView;
@@ -20,10 +23,11 @@ import java.util.ArrayList;
 public class StaggeredGridEmptyViewActivity extends Activity implements AbsListView.OnItemClickListener {
 
     public static final String SAVED_DATA_KEY = "SAVED_DATA";
-    private static final int FETCH_DATA_TASK_DURATION = 2000;
+    private static final int FETCH_DATA_TASK_DURATION = 1000;
 
     private StaggeredGridView mGridView;
     private SampleAdapter mAdapter;
+	private View header;
 
     private ArrayList<String> mData;
 
@@ -37,7 +41,7 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
 
         LayoutInflater layoutInflater = getLayoutInflater();
 
-        View header = layoutInflater.inflate(R.layout.list_item_header_footer, null);
+        header = layoutInflater.inflate(R.layout.list_item_header_footer, null);
         View footer = layoutInflater.inflate(R.layout.list_item_header_footer, null);
         TextView txtHeaderTitle = (TextView) header.findViewById(R.id.txt_title);
         TextView txtFooterTitle =  (TextView) footer.findViewById(R.id.txt_title);
@@ -59,12 +63,12 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
             mData = SampleData.generateSampleData();
         }
 
-
         mGridView.setAdapter(mAdapter);
-
         mGridView.setOnItemClickListener(this);
 
         fetchData();
+
+
     }
 
     private void fillAdapter() {
@@ -96,8 +100,29 @@ public class StaggeredGridEmptyViewActivity extends Activity implements AbsListV
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mAdapter.clear();
-        fetchData();
+		switch (item.getItemId()) {
+			case R.id.reload:
+				mAdapter.setItemAddListener(new SampleAdapter.ItemAddListener() {
+					@Override
+					public void onItemAdded() {
+						int dist = mGridView.getDistanceToTop() + header.getHeight();
+						mGridView.scroll(dist * -1);
+						mAdapter.setItemAddListener(null);
+					}
+				});
+
+				mAdapter.clear();
+				fetchData();
+				break;
+			case R.id.scroll:
+				Log.d("test", String.valueOf(mGridView.getDistanceToTop()));
+				while (mGridView.getDistanceToTop() * -1 != header.getHeight()) {
+					int dist = mGridView.getDistanceToTop() + header.getHeight();
+					mGridView.scroll(dist * -1);
+				}
+				Log.d("test", String.valueOf(mGridView.getDistanceToTop()));
+				break;
+		}
         return true;
     }
 

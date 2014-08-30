@@ -77,13 +77,17 @@ public class StaggeredGridActivity extends Activity implements AbsListView.OnScr
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.col1:
-				mGridView.setColumnCount(1);
+				//mGridView.setColumnCount(1);
+				mGridView.scrollTo(0, 200);
 				break;
 			case R.id.col2:
-				mGridView.setColumnCount(2);
-				break;
-			case R.id.col3:
-				mGridView.setColumnCount(3);
+				mAdapter.clear();
+				mData = SampleData.generateSampleData();
+			   	for (String data : mData) {
+					mAdapter.add(data);
+				}
+				mAdapter.notifyDataSetChanged();
+
 				break;
 		}
 		return true;

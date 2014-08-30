@@ -29,9 +29,18 @@ public class SampleAdapter extends ArrayAdapter<String> {
         Button btnGo;
     }
 
+	public static interface ItemAddListener {
+		public void onItemAdded();
+	}
+
     private final LayoutInflater mLayoutInflater;
     private final Random mRandom;
     private final ArrayList<Integer> mBackgroundColors;
+
+	private ItemAddListener itemAddListener;
+	public void setItemAddListener(ItemAddListener itemAddListener) {
+		this.itemAddListener = itemAddListener;
+	}
 
     private static final SparseArray<Double> sPositionHeightRatios = new SparseArray<Double>();
 
@@ -49,6 +58,9 @@ public class SampleAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
+		if (itemAddListener != null) {
+			itemAddListener.onItemAdded();
+		}
 
         ViewHolder vh;
         if (convertView == null) {

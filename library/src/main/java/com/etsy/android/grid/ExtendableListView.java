@@ -1197,6 +1197,10 @@ public abstract class ExtendableListView extends AbsListView {
         // TODO : ELSE SUPPORT OVERSCROLL!
     }
 
+	public void scroll(int y) {
+		moveTheChildren(y, y);
+	}
+
     private int findMotionRow(int y) {
         int childCount = getChildCount();
         if (childCount > 0) {
